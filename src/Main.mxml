@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+		backgroundGradientColors="[#171717, #171717]"
+		creationComplete="creationCompleteHandler(event)"
+		xmlns:aaronhardy="com.aaronhardy.*" viewSourceURL="srcview/index.html">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.events.SliderEvent;
+			
+			[Embed(source="assets/astronaut.jpg")]
+			protected var Astronaut:Class;
+			
+			[Embed(source="assets/sunflower.jpg")]
+			protected var Sunflower:Class;
+			
+			[Bindable]
+			protected var bitmapData:BitmapData;
+
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				setBitmapData(Astronaut);
+			}
+
+			protected function scaleSlider_changeHandler(event:SliderEvent):void
+			{
+				inspector.relativeScale = scaleSlider.value;
+			}
+			
+			protected function setBitmapData(ImageClass:Class):void
+			{
+				bitmapData = Bitmap(new ImageClass()).bitmapData;
+			}
+			
+			protected function formatDataTip(value:Number):String
+			{
+				return Math.round(value * 10) / 10 + 'x';
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Style>
+		global
+		{
+			color: #FFFFFF;
+		}
+		
+		.dataTip
+		{
+			color: #000000;
+		}
+	</mx:Style>
+	
+	<aaronhardy:ImageInspector id="inspector" width="100%" height="100%" viewRect="{pip.viewRect}"
+			bitmapData="{bitmapData}"/>
+	<aaronhardy:PictureInPicture id="pip" maxWidth="200" maxHeight="200" 
+			left="0" bottom="0" 
+			viewRect="{inspector.viewRect}"
+			bitmapData="{bitmapData}"/>
+	<mx:VBox backgroundColor="#4D4D4D" backgroundAlpha=".75" left="{pip.x + pip.width}" bottom="0"
+			paddingTop="5" paddingRight="5" paddingBottom="5" paddingLeft="5"
+			horizontalAlign="center" verticalGap="0">
+		<mx:RadioButtonGroup id="imageRadioGroup"/>
+		<mx:RadioButton label="Astronaut" group="{imageRadioGroup}" selected="true"
+				change="setBitmapData(Astronaut)"/>
+		<mx:RadioButton label="Sunflower" group="{imageRadioGroup}"
+				change="setBitmapData(Sunflower)"/>
+		<mx:HSlider id="scaleSlider" 
+				minimum="1" 
+				maximum="6"
+				tickInterval="1"
+				labels="['Fit', '6x']"
+				dataTipFormatFunction="{formatDataTip}"
+				dataTipStyleName="dataTip"
+				change="scaleSlider_changeHandler(event)" 
+				value="{inspector.relativeScale}"
+				liveDragging="true"/>
+	</mx:VBox>
+</mx:Application>
